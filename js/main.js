@@ -1,71 +1,97 @@
-const products = [
-    {
-        id: 1, 
-        title: 'Notebook', 
-        imageUrl: 'img/catalog/cat1.jpg',
-        price: 2000
-    },
-    {
-        id: 2, 
-        title: 'Mouse',
-        imageUrl: 'img/catalog/cat2.jpg',
-        price: 20
-    },
-    {
-        id: 3,
-        title: 'Keyboard', 
-        imageUrl: 'img/catalog/cat3.jpg',
-        price: 200
-    },
-    {
-        id: 4, 
-        title: 'Gamepad', 
-        imageUrl: 'img/catalog/cat4.jpg',
-        price: 50
-    },
-    {
-        id: 5, 
-        title: 'Notebook', 
-        imageUrl: 'img/catalog/cat5.jpg',
-        price: 2000
-    },
-    {
-        id: 6, 
-        title: 'Mouse',
-        imageUrl: 'img/catalog/cat6.jpg',
-        price: 20
-    },
-    {
-        id: 7,
-        title: 'Keyboard', 
-        imageUrl: 'img/catalog/cat7.jpg',
-        price: 200
-    },
-    {
-        id: 8, 
-        title: 'Gamepad', 
-        imageUrl: 'img/catalog/cat8.jpg',
-        price: 50
-    },
-];
+class ProductsList {
+    constructor (container = '.products'){
+        this.container = container;
+        this.goods = [];
+        this.goodsObjects =[];
+        this._fetchGoods();
+        this._render(); //вывод товаров на страницу
+    }
 
-//Функция для формирования верстки каждого товара
-//Добавить в выводе изображение
-const renderProduct = (item) => 
-    `<div class="product-item">
-                <h3>${item.title}</h3>
-                <img class="products__image img" src="${item.imageUrl}" alt="cart">
-                <p>${item.price}</p>
-                <button class="buy-btn">Купить</button>
-            </div>`;
+    _fetchGoods() {
+        this.goods = [
+            {id: 1, title: 'Notebook', price: 20000, img: 'img/catalog/cat1.jpg'},
+            {id: 2, title: 'Mouse', price: 1500, img: 'img/catalog/cat2.jpg'},
+            {id: 3, title: 'Keyboard', price: 5000, img: 'img/catalog/cat3.jpg'},
+            {id: 4, title: 'Gamepad', price: 4500, img: 'img/catalog/cat4.jpg'},
+        ];
+    }
 
-const renderPage = list => {
-    
-    const productsList = list.map(item => renderProduct(item)).join('');
-    console.log(productsList);
-    document.querySelector('.products').innerHTML = productsList;
-};
+     //Метод для вывода итоговой суммы корзины
+        getSum () {
+            // let sumGoods = document.querySelector('goods-list__total');
+            // let sum = 0;
+            // this.goods.forEach (item => {
+            //     sum += item.price;
+            // });
+            // console.log(sum);
+            // alert(sum);
+            // sumGoods.insertAdjacentHTML('beforeend', `${sum} руб.`);
 
-renderPage(products);
+             //reduce используется для последовательной обработки каждого элемента массива с сохранением промежуточного результата.
+        let res = this.goodsObjects.reduce((s, item) => s + item.price,0);
+        alert(res);
+        }
+
+
+
+    _render(){
+        const block = document.querySelector(this.container);
+        for (let product of this.goods) {
+            const productObject = new ProductItem (product);
+            // this.goodsObjects.push(productObject);
+            block.insertAdjacentHTML('beforeend', productObject.getHTMLString());
+        }
+    }
+
+}
+        class ProductItem {
+            constructor (item) {
+                this.id = item.id;
+                this.title = item.title;
+                this.price = item.price;
+                this.img = item.img;
+            }
+
+    getHTMLString () {
+        return `<div class="product-item" data-id="${this.id}">
+                    <h3>${this.title}</h3>
+                    <img class="products__image img" src="${this.img}" alt="cart">
+                    <p>${this.price.toLocaleString()} руб.</p>
+                    <button class="buy-btn">Купить</button>
+                </div>`;
+    }
+}
+
+    const catalog = new ProductsList();
+    catalog.getSum();
+
+
+
+
+
+// класс для корзины товаров
+    class Card {
+
+
+        addProduct () {
+            
+        }
+
+        
+        removeProduct () {
+            
+        }
+        render(){
+            
+        }
+    }
+
+
+// класс для элемента корзины товаров
+    class CardItem {
+        render(){
+            
+        }
+    }
 
 
