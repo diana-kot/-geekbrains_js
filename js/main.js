@@ -1,71 +1,140 @@
-const products = [
-    {
-        id: 1, 
-        title: 'Notebook', 
-        imageUrl: 'img/catalog/cat1.jpg',
-        price: 2000
-    },
-    {
-        id: 2, 
-        title: 'Mouse',
-        imageUrl: 'img/catalog/cat2.jpg',
-        price: 20
-    },
-    {
-        id: 3,
-        title: 'Keyboard', 
-        imageUrl: 'img/catalog/cat3.jpg',
-        price: 200
-    },
-    {
-        id: 4, 
-        title: 'Gamepad', 
-        imageUrl: 'img/catalog/cat4.jpg',
-        price: 50
-    },
-    {
-        id: 5, 
-        title: 'Notebook', 
-        imageUrl: 'img/catalog/cat5.jpg',
-        price: 2000
-    },
-    {
-        id: 6, 
-        title: 'Mouse',
-        imageUrl: 'img/catalog/cat6.jpg',
-        price: 20
-    },
-    {
-        id: 7,
-        title: 'Keyboard', 
-        imageUrl: 'img/catalog/cat7.jpg',
-        price: 200
-    },
-    {
-        id: 8, 
-        title: 'Gamepad', 
-        imageUrl: 'img/catalog/cat8.jpg',
-        price: 50
-    },
-];
+const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
-//Функция для формирования верстки каждого товара
-//Добавить в выводе изображение
-const renderProduct = (item) => 
-    `<div class="product-item">
-                <h3>${item.title}</h3>
-                <img class="products__image img" src="${item.imageUrl}" alt="cart">
-                <p>${item.price}</p>
-                <button class="buy-btn">Купить</button>
-            </div>`;
+// let getRequest = (url, cb) => {
+//     let xhr = new XMLHttpRequest();
+//     // window.ActiveXObject -> xhr = new ActiveXObject()
+//     xhr.open("GET", url, true);
+//     xhr.onreadystatechange = () => {
+//         if(xhr.readyState === 4){
+//             if(xhr.status !== 200){
+//                 console.log('Error');
+//             } else {
+//                 cb(xhr.responseText);
+//             }
+//         }
+//     };
+//     xhr.send();
+// };
 
-const renderPage = list => {
-    
-    const productsList = list.map(item => renderProduct(item)).join('');
-    console.log(productsList);
-    document.querySelector('.products').innerHTML = productsList;
-};
+class ProductsList {
+    constructor(container = '.products') {
+        this.container = container;
+        this.goods = [];//массив товаров
+        this.allProducts = [];//массив объектов
+        this._getProducts()
+            .then(data => { //data - объект js
+                this.goods = [...data];
+                this.render()
+            });
+    }
+    // _fetchProducts(cb){
+    //     getRequest(`${API}/catalogData.json`, (data) => {
+    //         this.goods = JSON.parse(data);
+    //         console.log(this.goods);
+    //         cb();
+    //     })
+    // }
+    _getProducts() {
+        return fetch(`${API}/catalogData.json`)
+            .then(result => result.json())
+            .catch(error => {
+                console.log(error);
+            })
+    }
+    calcSum() {
+        return this.allProducts.reduce((accum, item) => accum += item.price, 0);
+    }
+    render() {
+        const block = document.querySelector(this.container);
+        for (let product of this.goods) {
+            const productObj = new ProductItem(product);
+            this.allProducts.push(productObj);
+            block.insertAdjacentHTML('beforeend', productObj.render());
+        }
 
-renderPage(products);
+    }
+}
 
 
+class ProductItem {
+    constructor(product, img = 'https://placehold.it/200x150') {
+        this.title = product.product_name;
+        this.price = product.price;
+        this.id = product.id_product;
+        this.img = img;
+    }
+    render() {
+        return `<div class="product-item" data-id="${this.id}">
+                <img src="${this.img}" alt="Some img">
+                <div class="desc">
+                    <h3>${this.title}</h3>
+                    <p>${this.price} $</p>
+                    <button class="buy-btn">Купить</button>
+                </div>
+            </div>`
+    }
+}
+
+let list = new ProductsList();
+
+
+class basket {
+    constructor(container = '.cart-block') {
+        this.container = container;
+        this.goods = [];//массив товаров
+       
+        this._clickBasket();
+        this._getBasketItem()
+            .then(data => { //data - объект js
+                this.goods = [...data.contents];
+                this.render()
+            });
+    }
+
+
+    _getBasketItem() {
+        return fetch(`${API}/getBasket.json`)
+            .then(result => result.json())
+            .catch(error => {
+                console.log(error);
+            })
+    }
+
+    render() {
+        const block = document.querySelector(this.container);
+        for (let product of this.goods) {
+            const productObj = new BasketItem();
+            
+            block.insertAdjacentHTML('beforeend', productObj.render(product));
+        }
+
+    }
+
+    _clickBasket() {
+        document.querySelector(".btn-cart").addEventListener('click', () => {
+            document.querySelector(this.container).classList.toggle('invisible');
+        });
+    }
+}
+
+class BasketItem {
+  
+    render(product) {
+        return `<div class="cart-content__item" data-id="${product.id_product}">
+                <div class="cart-content__product cart-product">
+                <img src="${product.img}" alt="Some image" class="cart-product__img">
+                <div class="cart-product__text">
+                <p class="cart-product__title">${product.product_name}</p>
+                <p class="product-quantity">Quantity: ${product.quantity}</p>
+            <p class="product-single-price">$${product.price} each</p>
+            </div>
+            </div>
+            <div class="right-block">
+                <p class="cart-product__price">$${product.quantity * product.price}</p>
+                <button class="cart-product__delete" data-id="${product.id_product}">&times;</button>
+            </div>
+            </div>`
+    }
+}
+
+let bask = new basket();
