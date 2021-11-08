@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="select.css">
+		<link rel="stylesheet" href="style.css">
+		<title>Стилизайция и отправка формы</title>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="form">
+				<form action="#" id="form" class="form__body">
+					<h1 class="form__title">Отправда данных на почту</h1>
+					<div class="form__item">
+						<label for="formName" class="form__label">Имя*:</label>
+						<input id="formName" type="text" name="name" class="form__input _req">
+					</div>
+                    <div class="form__item">
+                        <label for="telNumber" class="form__label">Номера телефона*: +7(000)000-0000</label>
+                        <input id="telNumber" type="tel" class="form__input _req _tel" placeholder="+7(000)000-0000">
+                    </div>
+                        
+					<div class="form__item">
+						<label for="formEmail" class="form__label">E-mail*:</label>
+						<input id="formEmail" type="text" name="email" class="form__input _req _email" placeholder="mymail@mail.ru, my.mail@mail.ru, my-mail@mail.ru">
+					</div>
+					<div class="form__item">
+						<label for="formMessage" class="form__label">Сообщение:</label>
+						<textarea name="message" id="formMessage" class="form__input"></textarea>
+					</div>
+					<button type="submit" class="form__button">Отправить</button>
+				</form>
+			</div>
+		</div>
+		<script src="js/forma.js"></script>
+	
+	</body>
+</html>
